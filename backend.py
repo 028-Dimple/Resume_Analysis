@@ -48,7 +48,7 @@ def generate_questions(resume_text: str) -> list[str]:
             ...
             10. [Tenth question]"""
     
-    model = genai.GenerativeModel('gemini-pro')
+    model = genai.GenerativeModel('gemini-1.5-flash-002')
     response = model.generate_content(prompt)
     print("\n\nthis is the response from ai for question: \n", response)
     return response.text.split("\n")
@@ -66,7 +66,7 @@ def generate_questions_category_wise(choice: str) -> list[str]:
     Ensure that the questions cover fundamental, conceptual, and practical aspects of the topic.
     """
     
-    model = genai.GenerativeModel('gemini-pro')
+    model = genai.GenerativeModel('gemini-1.5-flash-002')
     response = model.generate_content(prompt)
     print("\n\nthis is the response from ai for question: \n", response)
     return response.text.split("\n")
