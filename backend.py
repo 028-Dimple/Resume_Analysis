@@ -420,6 +420,51 @@ def create_pdf_from_text(text: str, output_filename: str):
         raise ValueError(f"Error building PDF: {str(e)}")
 
 
+def generate_score(resume_text: str, job_description: str):
+    prompt = f"""
+    You are an experienced recruiter and career advisor. Your task is to evaluate how well a candidate's resume matches a given job description.
+
+    Inputs:
+    1. resume_text: This is the candidate's current resume.
+    2. job_description: This is the job the candidate is applying for.
+
+    Your task:
+    - Carefully read both the resume and the job description.
+    - Assess how closely the resume matches the job description based on:
+        - Relevant skills and technical expertise
+        - Educational background
+        - Work experience and accomplishments
+        - Use of important keywords and tools mentioned in the job description
+        - Overall alignment with the role's responsibilities and requirements
+
+    Scoring:
+    - Assign a score out of 100, where:
+        - 90-100: Excellent match
+        - 75-89: Good match
+        - 50-74: Moderate match
+        - Below 50: Poor match
+
+    Rules:
+    - Be strict but fair while scoring. 
+    - Do not assume skills or experiences that are not mentioned in the resume.
+    - If important skills, qualifications, or experience are missing or weakly presented, reduce the score accordingly.
+    - Base your evaluation purely on the provided information.
+
+    Return the output in the following JSON format:
+    {{
+    "score": [score out of 100]
+    }}
+    Resume Text:
+    {resume_text}
+
+    Job Description:
+    {job_description}
+    """
+
+    model = genai.GenerativeModel('gemini-1.5-flash-002')
+    response = model.generate_content(prompt)
+    print("\n\nthis is the response from ai for question: \n", response)
+    return response.text
 
 
 
@@ -504,11 +549,13 @@ async def enhance_resume(job_description: str = Form(...), file: UploadFile = Fi
 
     create_pdf_from_text(enhanced_text, output_filename)
 
-    return FileResponse(
-                path=output_filename,
-                media_type="application/pdf",
-                filename="enhanced_resume.pdf"
-            )
+# Generate score
+    # score = generate_score(enhanced_text, job_description)
+    score = {"score": 70}
+    print("The score is: ", score)
 
-
+    return {
+        "file_path": output_filename,
+        "score": score["score"]
+        }
 

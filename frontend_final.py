@@ -188,22 +188,21 @@ def render_enhance_resume():
                     )
 
                 if response.status_code == 200:
+                    response_data = response.json()
+                    score = response_data.get("score", "N/A")
+                    st.write(f"Resume Match Score: {score}/100")
                     st.download_button(
                         label="Download Enhanced Resume",
-                        data=response.content,
-                        file_name="enhanced_resume." + st.session_state.uploaded_file_extension,  # Use saved file extension
-                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        data=open(response_data["file_path"], "rb").read(),
+                        file_name="enhanced_resume." + st.session_state.uploaded_file_extension,
+                        mime="application/pdf"
                     )
                     st.success("Your resume has been enhanced! Click the button above to download it.")
-                    
-                    # Remove the temporary file after download
-                    if os.path.exists(st.session_state.resume_file_path):
-                        os.remove(st.session_state.resume_file_path)
                 else:
                     st.error(f"Failed to enhance resume. Error: {response.status_code}")
 
 
-st.title("Practice for Interview")
+st.title("Practice for Interview")      
 
 st.write("Hi, I’m Jesse, your personal assistant. I’m here to help you practice interviews and land your dream job.")
 
